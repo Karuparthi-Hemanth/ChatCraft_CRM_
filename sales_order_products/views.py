@@ -58,8 +58,7 @@ def addSalesorderProduct(request : HttpRequest):
 
 @csrf_exempt
 def editSalesOrderProduct(request, sales_order_id,seq_num):
-    instance = get_object_or_404(SalesOrderProduct, pk=(Sales_Order_id,Seq_Num))
-
+    instance = get_object_or_404(SalesOrderProduct, SALES_ORDER_ID=sales_order_id, SEQ_NUM=seq_num)
     if request.method == 'POST':
         form = SalesOrderProductForm(request.POST, instance=instance)
         print(form.errors)
@@ -77,8 +76,8 @@ def editSalesOrderProduct(request, sales_order_id,seq_num):
     # return render(request, 'Customer/edit_Customer.html', {'form': form, 'instance': instance})
 
 @csrf_exempt
-def deleteSalesOrderProduct(request,sales_order_id):
-    sop = SalesOrderProduct.objects.filter(SALES_ORDER_ID=sales_order_id)
+def deleteSalesOrderProduct(request,sales_order_id,seq_num):
+    sop = SalesOrderProduct.objects.filter(SALES_ORDER_ID=sales_order_id,SEQ_NUM=seq_num)
     sop.delete()
     return HttpResponse("deleted")
 
