@@ -23,5 +23,6 @@ urlpatterns = [
     path('chat/',include('chat.urls')),
     path('customers/',include('customers.urls')),
     path('sales_orders/',include('sales_orders.urls')),
-    path('sales_order_products/',include('sales_order_products.urls'))
+    path('sales_order_products/',include('sales_order_products.urls')),
+    path('sales_invoices/',include('sales_invoices.urls'))
 ]

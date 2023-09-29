@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'sales_invoices',
     'sales_order_products',
     'sales_orders',
     'customers',

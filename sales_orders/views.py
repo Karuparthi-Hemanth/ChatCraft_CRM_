@@ -14,26 +14,26 @@ def getSalesOrder(request : HttpRequest):
     data = request.GET
     sales_orders = SalesOrder.objects.all()
 
-    # filter_fields =["SALESORDER_ID", "CUSTOMER_ID", "ORDERDATE", "STATUS", "AMOUNT"]
+    filter_fields =["SALES_ORDER_ID", "CUSTOMER_ID", "ORDERDATE", "STATUS", "AMOUNT"]
     
-    # for field in filter_fields:
-    #     param_value = data.get(field)
-    #     if param_value:
-    #         sales_orders = sales_orders.filter(**{field: param_value})
+    for field in filter_fields:
+        param_value = data.get(field)
+        if param_value:
+            sales_orders = sales_orders.filter(**{field: param_value})
             
-    # sales_order_list = []
+    sales_order_list = []
 
-    # for sales_order in sales_order_list:
-    #     sales_order_details = {
-    #         "SALESORDER_ID":sales_order.SALESORDER_ID,
-    #         "CUSTOMER_ID": sales_order.CUSTOMER_ID,
-    #         "ORDERDATE": sales_order.ORDERDATE,
-    #         "STATUS": sales_order.STATUS,
-    #         "AMOUNT" : sales_order.AMOUNT,
-    #     }
-    #     sales_order_list.append(sales_order_details)
+    for sales_order in sales_orders:
+        sales_order_details = {
+            "SALES_ORDER_ID":sales_order.SALES_ORDER_ID,
+            "CUSTOMER_ID": sales_order.CUSTOMER_ID.CUSTOMER_ID,
+            "ORDERDATE": sales_order.ORDERDATE,
+            "STATUS": sales_order.STATUS,
+            "AMOUNT" : sales_order.AMOUNT,
+        }
+        sales_order_list.append(sales_order_details)
 
-    sales_order_data = serializers.serialize('json', sales_orders)
+    sales_order_data = json.dumps(sales_order_list, indent=4)
     return HttpResponse(sales_order_data)
 
 @csrf_exempt

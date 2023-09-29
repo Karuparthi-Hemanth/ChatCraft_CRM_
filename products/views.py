@@ -1,42 +1,13 @@
-from django.shortcuts import render,get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpRequest,HttpResponse
 from .models import Product
 from django.views.decorators.csrf import csrf_exempt
-from django.core import serializers
 import json
+from django.core import serializers
+from .forms import ProductForm
+
 # Create your views here.
-@csrf_exempt
-def addProduct(request : HttpRequest):
-    data = request.POST
-    p=Product(PRODUCT_NAME = data["PRODUCT_NAME"],
-              UOM = data["UOM"],
-              QUANTITY_ON_HAND = data["QUANTITY_ON_HAND"],
-              COST = data["COST"],
-              STATUS = data["STATUS"])
-    p.save()
-    return HttpResponse("created")
-
-@csrf_exempt
-def editProduct(request,product_id:int):
-    data = request.POST
-    p = Product.objects.get(PRODUCT_ID = product_id)
-    p.PRODUCT_NAME = data["PRODUCT_NAME"]
-    p.QUANTITY_ON_HAND = data["QUANTITY_ON_HAND"]
-    p.COST = data["COST"]
-    p.STATUS = data["STATUS"]
-    p.UOM = data["UOM"]
-    p.save()
-    return HttpResponse("updated")
-
-
-@csrf_exempt
-def deleteProduct(request,product_id:int):
-    product = get_object_or_404(Product, pk=product_id)
-    product.delete()
-    return HttpResponse("deleted")
-
-@csrf_exempt
-def getProduct(request: HttpRequest):
+def getProduct(request : HttpRequest):
     data = request.GET
     products = Product.objects.all()
 
@@ -64,5 +35,37 @@ def getProduct(request: HttpRequest):
 
     # Convert the product_list to JSON
     product_data = json.dumps(product_list, indent=4)
+    return HttpResponse(product_data)
 
-    return HttpResponse(product_data, content_type="application/json")
+@csrf_exempt
+def addProduct(request : HttpRequest):
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponse("added")
+    else:
+        error_json = form.errors.as_json()
+        return HttpResponse(error_json, content_type='application/json')
+
+@csrf_exempt
+def editProduct(request, product_id):
+    instance = get_object_or_404(Product, pk=product_id)
+
+    if request.method == 'POST':
+        form = ProductForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            # Redirect to a success page or show a success message
+            return HttpResponse("edited") 
+    else:
+        error_json = form.errors.as_json()
+        return HttpResponse(error_json, content_type='application/json')
+
+@csrf_exempt
+def deleteProduct(request, product_id):
+    data = request.POST
+    product = get_object_or_404(Product, pk=product_id)
+    product.delete()
+
+    return redirect('/products/get/')
