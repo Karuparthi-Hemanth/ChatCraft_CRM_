@@ -54,21 +54,7 @@ def addSalesorderProduct(request : HttpRequest):
     else:
         error_json = form.errors.as_json()
         return HttpResponse(error_json, content_type='application/json')
-    # return render(request, 'Customers/add_customer.html', {'form': form})
-# def addCustomer(request):
-#     if request.method == 'POST':
-#         data = request.POST
-#         customer = Customer(
-#             COMPANY_NAME=data["COMPANY_NAME"],
-#             BALANCE_DUE=data.get("BALANCE_DUE", 0),  # Default to 0 if not provided
-#             ADDRESS=data.get("ADDRESS", None),  # Default to None if not provided
-#             STATUS=data.get("STATUS", None),  # Default to None if not provided
-#             CONTACT=data.get("CONTACT", None),  # Default to None if not provided
-#         )
-#         customer.save()
-#         return HttpResponse("Customer created successfully")
-#     else:
-#         return HttpResponse("Invalid request method")
+
 
 @csrf_exempt
 def editSalesOrderProduct(request, sales_order_id,seq_num):
