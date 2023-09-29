@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'customers',
     'chat',
     'products',
+    'customer_ledger_entries',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

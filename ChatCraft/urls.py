@@ -24,5 +24,6 @@ urlpatterns = [
     path('customers/',include('customers.urls')),
     path('sales_orders/',include('sales_orders.urls')),
     path('sales_order_products/',include('sales_order_products.urls')),
-    path('sales_invoices/',include('sales_invoices.urls'))
+    path('sales_invoices/',include('sales_invoices.urls')),
+    path('customer_ledger_entries/',include('customer_ledger_entries.urls'))
 ]
