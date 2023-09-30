@@ -15,6 +15,7 @@
 <table class="custom-table">
     <thead>
         <tr class="table-header">
+            <th></th>
             <th>Sales Order ID</th>
             <th>Customer ID</th>
             <th>Order Date</th>
@@ -26,6 +27,8 @@
     <tbody>
         {% for sales_order in sales_orders %}
         <tr>
+            <td><button class="toggle-items" data-sales-order-id="{{ sales_order.SALES_ORDER_ID }}">
+            +</button></td>
             <td>{{ sales_order.SALES_ORDER_ID }}</td>
             <td>{{ sales_order.CUSTOMER_ID }}</td>
             <td>{{ sales_order.ORDERDATE }}</td>
@@ -35,6 +38,22 @@
                 <a href="/sales_orders/edit/{{ sales_order.SALES_ORDER_ID }}/" class="action-link">Edit</a> |
                 <a href="/sales_orders/delete/{{ sales_order.SALES_ORDER_ID }}/" class="action-link">Delete</a>
             </td>
+        </tr>
+        <tr  style="display: none;">
+            <table style="width: 60%;" class="custom-table">
+                <tr class="table-header">
+                    <th>Seq No.</th>
+                    <th>Product ID</th>
+                    <th>Quantity</th>
+                    <th>Amount</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>5</td>
+                    <td>455</td>
+                </tr>
+            </table>
         </tr>
         {% endfor %}
     </tbody>

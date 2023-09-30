@@ -183,8 +183,9 @@
             const chatInput = document.getElementById('chat-input');
             const sendMessageBtn = document.getElementById('send-message');
 
-            let module, action, columns = [], expected_cols, columns_keys;
-            let all_modules = ['products', 'salesorders', 'salesinvoices', 'customers', 'employees'];
+            let module, action, columns = {}, columns_keys=[], filter={};
+            let all_modules = ['products', 'sales_orders', 'sales_invoices', 'customers',
+                                'customer_ledger_entries', 'sales_order_products'];
             let all_actions = ['add', 'edit', 'delete'];
 
             function appendMessage(message, type) {
@@ -212,24 +213,67 @@
                     appendMessage(`${input}`, 'user')
                     if (all_actions.includes(input)) {
                         action = input;
-                        columns_keys = ['Column 1', 'Column 2', 'Column 3'];
-                        expected_cols = columns_keys.length;
-                        appendMessage(`Enter the following Columns for ${module} to perform ${action}.`, 'bot');
-                        appendMessage(`Enter the ${columns_keys[columns.length]}`, 'bot')
+                        fetch(`/getcolumns/`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({'module':module,'action':action}),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            columns_keys = JSON.parse(JSON.stringify(data));
+                        })
+                        .then(()=>{
+                            appendMessage(`Enter the following Columns for ${module} to perform ${action}.`, 'bot');
+                            appendMessage(`Enter the ${columns_keys[Object.keys(columns).length]}`, 'bot')
+                        }
+                        )
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                        
+                        // columns_keys = ['PRODUCT_NAME', 'UOM', 'COST','QUANTITY_ON_HAND','STATUS'];
+                        // expected_cols = columns_keys.length;
+                        
                     }
                     else {
                         appendMessage('Enter valid action.', 'bot');
                     }
                 }
-                else if (columns.length != expected_cols) {
+                else if (Object.keys(columns).length != columns_keys.length) {
                     appendMessage(`${input}`, 'user');
-                    columns.push(input);
-                    if (columns.length == expected_cols) {
+                    columns[columns_keys[Object.keys(columns).length]]=input;
+                    if(action=='edit' && Object.keys(filter).length==0 && Object.keys(columns).length == columns_keys.length){
+                        alert(columns);
+                        alert(filter);
+                        filter={...columns};
+                        columns={};
+                    }
+                    else if (Object.keys(columns).length == columns_keys.length) {
+                        if(action=='delete'){
+                            filter=columns;
+                            columns={};
+                        }
+                        fetch('/perform/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({'module':module,'action':action,'filter':filter,'new_data':columns}),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            appendMessage(`${data}`,'bot');
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                         appendMessage('Action was successfully performed', 'bot');
                         appendMessage('Wanna Continue?', 'bot');
                     }
                     else {
-                        appendMessage(`Enter the ${columns_keys[columns.length]}`, 'bot');
+                        appendMessage(`Enter the ${columns_keys[Object.keys(columns).length]}`, 'bot');
                     }
                 }
                 else {
