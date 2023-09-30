@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'customers',
     'chat',
     'products',
+    'home',
     'customer_ledger_entries',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -61,7 +62,9 @@ ROOT_URLCONF = 'ChatCraft.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates','customer_ledger_entries/templates','customers/templates',
+                 'home/templates','products/templates','sales_invoices/templates',
+                 'sales_order_products/templates','sales_orders/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -32,17 +32,23 @@ def getCustomer(request : HttpRequest):
         customer_list.append(customer_details)
 
     customer_data = json.dumps(customer_list, indent=4)
-    return HttpResponse(customer_data)
+    return render(request, 'Customers/display_customers.html', {'customers':customers,'form':CustomerForm})
 
 @csrf_exempt
 def addCustomer(request : HttpRequest):
-    form = CustomerForm(request.POST)
-    if form.is_valid():
-        form.save()
-        return HttpResponse("added")
+    if request.method == 'POST':
+        form = CustomerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # return HttpResponse("added")
+            return redirect('/customers/get/')
+        else:
+            error_json = form.errors.as_json()
+            return HttpResponse(error_json, content_type='application/json')
     else:
-        error_json = form.errors.as_json()
-        return HttpResponse(error_json, content_type='application/json')
+        form = CustomerForm()
+
+    return render(request, 'Customers/save_customer.html', {'form': form})
     
 @csrf_exempt
 def editCustomer(request, customer_id):
@@ -52,10 +58,15 @@ def editCustomer(request, customer_id):
         if form.is_valid():
             form.save()
             # Redirect to a success page or show a success message
-            return HttpResponse("saved")
+            # return HttpResponse("saved")
+            return redirect('/customers/get/')
         else:
             error_json = form.errors.as_json()
             return HttpResponse(error_json, content_type='application/json')
+    else:
+        form = CustomerForm(instance=instance)
+        # return HttpResponse("updated")
+        return render(request, 'Customers/save_Customer.html', {'form': form, 'instance': instance})
 
 @csrf_exempt
 def deleteCustomer(request, customer_id):

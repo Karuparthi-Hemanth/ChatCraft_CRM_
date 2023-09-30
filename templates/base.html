@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatCraft CRM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: 100%;
+            height: 100vh;
+            /* Set the grid container height */
+        }
+
+        .main-content {
+            background-color: #f8f8f8;
+            padding: 20px;
+            height: 100%;
+            /* Make the main content fill the grid cell */
+        }
+
+        .chat-dialog {
+            background-color: #e0e0e0;
+            padding: 20px;
+            height: 100%;
+            /* Make the chat dialog fill the grid cell */
+            overflow-y: scroll;
+        }
+
+        .chat-container {
+            max-height: 400px;
+        }
+
+        .chat-dialog {
+            background-color: #e0e0e0;
+            padding: 20px;
+            height: 100%;
+            /* Make the chat dialog fill the grid cell */
+            overflow-y: scroll;
+            /* Add vertical scrollbar */
+            position: relative;
+            /* Add relative positioning */
+            display: none;
+            flex-direction: column;
+        }
+
+        h1 {
+            flex: 1;
+            /* Take up 10% of the available height */
+            margin: 0;
+            position: relative;
+        }
+
+        .chat-container {
+            flex: 7;
+            /* Take up 70% of the available height */
+            height: 480px;
+            max-height: none;
+            /* Set a maximum height for the chat container */
+            overflow-y: scroll;
+            /* Add a vertical scrollbar when needed */
+            /* scroll-behavior: smooth; */
+        }
+
+        .chat-input {
+            flex: 2;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+            max-width: 75%;
+        }
+
+        .chat-input button {
+            border: none;
+            background: none;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .user-message {
+            background-color: #007bff;
+            color: #fff;
+            text-align: right;
+        }
+
+        .bot-message {
+            background-color: #28a745;
+            color: #fff;
+            text-align: left;
+        }
+
+        .user-message,
+        .bot-message {
+            border-radius: 15px;
+            padding: 10px 15px;
+            max-width: 80%;
+            word-break: break-word;
+            margin-bottom: 10px;
+        }
+
+        {% block extra_css %}
+        {% endblock %}
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: teal;">
+        <a class="navbar-brand" href="#">ChatCraft CRM</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                </li>
+                {% block extra_nav %}{% endblock %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="grid-container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Your existing content goes here -->
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        <!-- Chat Dialog -->
+        <div class="chat-dialog">
+            <!-- Chat content goes here -->
+            <h1 style="position: relative;">Chat</h1>
+            <br><br>
+            <div id="chat-sidebar">
+                <div class="chat-container">
+                    <div id="chat-messages"></div>
+                </div>
+            </div>
+            <br>
+            <div class="chat-input" style="position: relative;">
+                <input type="text" id="chat-input" placeholder="Type a message...">
+                <button id="send-message"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+    <!-- Your existing HTML code... -->
+
+    <button id="toggle-chat"
+        style="position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; font-size: 16px; background-color: teal; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        <i class="fas fa-times"></i>
+    </button>
+    <!-- Your existing HTML code... -->
+
+
+    <!-- Add Bootstrap JS (optional, for dropdowns, toggles, etc.) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatMessages = document.getElementById('chat-messages');
+            const chatInput = document.getElementById('chat-input');
+            const sendMessageBtn = document.getElementById('send-message');
+
+            let module, action, columns = [], expected_cols, columns_keys;
+            let all_modules = ['products', 'salesorders', 'salesinvoices', 'customers', 'employees'];
+            let all_actions = ['add', 'edit', 'delete'];
+
+            function appendMessage(message, type) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', type + '-message');
+                messageElement.innerText = message;
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function handleUserInput(input) {
+                if (!input) return;
+
+                if (!module) {
+                    appendMessage(`${input}`, 'user');
+                    if (all_modules.includes(input)) {
+                        module = input;
+                        appendMessage('Enter action (add, delete, edit).', 'bot');
+                    }
+                    else {
+                        appendMessage('Enter valid module.', 'bot');
+                    }
+                }
+                else if (!action) {
+                    appendMessage(`${input}`, 'user')
+                    if (all_actions.includes(input)) {
+                        action = input;
+                        columns_keys = ['Column 1', 'Column 2', 'Column 3'];
+                        expected_cols = columns_keys.length;
+                        appendMessage(`Enter the following Columns for ${module} to perform ${action}.`, 'bot');
+                        appendMessage(`Enter the ${columns_keys[columns.length]}`, 'bot')
+                    }
+                    else {
+                        appendMessage('Enter valid action.', 'bot');
+                    }
+                }
+                else if (columns.length != expected_cols) {
+                    appendMessage(`${input}`, 'user');
+                    columns.push(input);
+                    if (columns.length == expected_cols) {
+                        appendMessage('Action was successfully performed', 'bot');
+                        appendMessage('Wanna Continue?', 'bot');
+                    }
+                    else {
+                        appendMessage(`Enter the ${columns_keys[columns.length]}`, 'bot');
+                    }
+                }
+                else {
+                    appendMessage(`${input}`, 'user');
+                    if (input == 'yes') {
+                        module = null;
+                        action = null;
+                        columns = null;
+                        appendMessage('Enter module:', 'bot');
+                    }
+                    else {
+                        appendMessage('Thank You', 'bot');
+                    }
+                }
+
+                chatInput.value = '';
+            }
+
+            sendMessageBtn.addEventListener('click', function () {
+                handleUserInput(chatInput.value);
+            });
+
+            chatInput.addEventListener('keydown', function (event) {
+                if (event.key == 'Enter') {
+                    handleUserInput(chatInput.value);
+                }
+            });
+
+            appendMessage('Hi! Welcome', 'bot')
+            appendMessage('Enter module.', 'bot');
+
+            const chatDialog = document.querySelector('.chat-dialog');
+            const toggleChatButton = document.getElementById('toggle-chat');
+            const mainpage = document.querySelector('.grid-container');
+
+            function toggleChat() {
+                if (chatDialog.style.display === 'none' || chatDialog.style.display === '') {
+                    chatDialog.style.display = 'block';
+                    mainpage.style.gridTemplateColumns = '70% 30%';
+                    is_chat_open = true;
+                } else {
+                    chatDialog.style.display = 'none';
+                    mainpage.style.gridTemplateColumns = '100% 0%';
+                    is_chat_open = false;
+                }
+            }
+            toggleChatButton.addEventListener('click', toggleChat);
+        });
+    </script>
+</body>
+
+</html>

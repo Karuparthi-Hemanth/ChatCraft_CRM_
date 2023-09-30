@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container" style="text-align: center;">
+    <br><br>
+    <h1>Welcome to ChatCraft CRM</h1>
+    <br><br><br><br>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-shopping-cart"></i>  Products</h5>
+                    <p class="card-text">Manage your contacts with ease.</p>
+                    <a href="products/get/" class="btn btn-primary">Go To</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-user"></i>  Customers</h5>
+                    <p class="card-text">Track interactions and communications.</p>
+                    <a href="customers/get/" class="btn btn-primary">Go To</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-file-alt"></i>  Sales Orders</h5>
+                    <p class="card-text">Monitor sales and leads.</p>
+                    <a href="sales_orders/get/" class="btn btn-primary">Go To</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-book"></i>  Customer Ledger Entry</h5>
+                    <p class="card-text">Automate tasks and workflows.</p>
+                    <a href="customer_ledger_entries/get/" class="btn btn-primary">Go To</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-file-invoice"></i>  Sales Invoices</h5>
+                    <p class="card-text">Generate insightful reports.</p>
+                    <a href="sales_invoices/get/" class="btn btn-primary">Go To</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

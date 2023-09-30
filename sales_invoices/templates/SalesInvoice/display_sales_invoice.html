@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block extra_nav %}
+<li class="nav-item">
+    <a class="nav-link" href="/sales_invoices/add/" style="color: white;">Add Sales Invoice</a>
+</li>
+{% endblock %}
+{% block content %}
+
+<h1 class="page-title">Sales Invoices</h1>
+<form method="get" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Search</button>
+</form>
+<table class="custom-table">
+    <thead>
+        <tr class="table-header">
+            <th>Sales Invoice ID</th>
+            <th>Sales Order ID</th>
+            <th>Customer ID</th>
+            <th>Total Amount</th>
+            <th>Total Items</th>
+            <th>Invoice Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sales_invoice in sales_invoices %}
+        <tr>
+            <td>{{ sales_invoice.SALES_INVOICE_ID }}</td>
+            <td>{{ sales_invoice.SALES_ORDER_ID }}</td>
+            <td>{{ sales_invoice.CUSTOMER_ID }}</td>
+            <td>{{ sales_invoice.TOTAL_AMOUNT }}</td>
+            <td>{{ sales_invoice.TOTAL_ITEMS }}</td>
+            <td>{{ sales_invoice.INVOICE_DATE }}</td>
+            <td>{{ sales_invoice.STATUS }}</td>
+            <td>
+                <a href="/sales_invoices/edit/{{ sales_invoice.SALES_INVOICE_ID }}/" class="action-link">Edit</a> |
+                <a href="/sales_invoices/delete/{{ sales_invoice.SALES_INVOICE_ID }}/" class="action-link">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block extra_css %}
+body {
+    font-size: 15px;
+}
+
+.custom-table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #ccc;
+    margin-top: 20px;
+    overflow-y: auto;
+}
+
+.custom-table th, .custom-table td {
+    text-align: left;
+    padding: 8px;
+}
+
+.table-header {
+    background-color: teal;
+    color: white;
+}
+
+.custom-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.action-link {
+    text-decoration: none;
+    color: #007bff;
+    margin-right: 5px;
+}
+
+/* Add this to your existing CSS file or style block */
+form {
+margin-top: 20px;
+padding: 10px;
+border: 1px solid #ccc;
+background-color: #f8f8f8;
+}
+
+form input[type="text"] {
+padding: 8px;
+margin-right: 10px;
+border: 1px solid #ccc;
+border-radius: 4px;
+}
+
+form button[type="submit"] {
+padding: 8px 16px;
+background-color: teal;
+border: none;
+color: white;
+border-radius: 4px;
+cursor: pointer;
+}
+
+{% endblock %}

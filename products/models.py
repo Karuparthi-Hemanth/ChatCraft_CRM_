@@ -10,4 +10,4 @@ class Product(models.Model):
     STATUS = models.CharField(max_length=35,null = True,blank=True)
     
     def __str__(self):
-        return f"{self.PRODUCT_NAME}"
+        return f"{self.PRODUCT_ID} -- {self.PRODUCT_NAME}"

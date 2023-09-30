@@ -11,3 +11,6 @@ class SalesInvoice(models.Model):
     TOTAL_ITEMS=models.IntegerField(null=True,blank=True)
     INVOICE_DATE = models.DateField(null=True,blank=True)
     STATUS = models.CharField(max_length=35,null=True,blank=True)
+
+    def __str__(self):
+        return f"{self.SALES_INVOICE_ID}"

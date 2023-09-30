@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block extra_nav %}
+<li class="nav-item">
+    <a class="nav-link" href="/customers/add/" style="color: white;">Add Customer</a>
+</li>
+{% endblock %}
+{% block content %}
+<h1 class="page-title">Customers</h1>
+<form method="get" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Search</button>
+</form>
+<table class="custom-table">
+    <thead>
+        <tr class="table-header">
+            <th>Customer ID</th>
+            <th>Company Name</th>
+            <th>Balance Due</th>
+            <th>Address</th>
+            <th>Status</th>
+            <th>Contact</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for customer in customers %}
+        <tr>
+            <td>{{ customer.CUSTOMER_ID }}</td>
+            <td>{{ customer.COMPANY_NAME }}</td>
+            <td>{{ customer.BALANCE_DUE }}</td>
+            <td>{{ customer.ADDRESS }}</td>
+            <td>{{ customer.STATUS }}</td>
+            <td>{{ customer.CONTACT }}</td>
+            <td>
+                <a href="/customers/edit/{{ customer.CUSTOMER_ID }}/" class="action-link">Edit</a> |
+                <a href="/customers/delete/{{ customer.CUSTOMER_ID }}/" class="action-link">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block extra_css %}
+body {
+font-size: 15px;
+}
+
+.custom-table {
+border-collapse: collapse;
+width: 100%;
+border: 1px solid #ccc;
+margin-top: 20px;
+overflow-y: auto;
+}
+
+.custom-table th, .custom-table td {
+text-align: left;
+padding: 8px;
+}
+
+.table-header {
+background-color: teal;
+color: white;
+}
+
+.custom-table tr:nth-child(even) {
+background-color: #f2f2f2;
+}
+
+.action-link {
+text-decoration: none;
+color: #007bff;
+margin-right: 5px;
+}
+form {
+margin-top: 20px;
+padding: 10px;
+border: 1px solid #ccc;
+background-color: #f8f8f8;
+}
+
+form input[type="text"] {
+padding: 8px;
+margin-right: 10px;
+border: 1px solid #ccc;
+border-radius: 4px;
+}
+
+form button[type="submit"] {
+padding: 8px 16px;
+background-color: teal;
+border: none;
+color: white;
+border-radius: 4px;
+cursor: pointer;
+}
+{% endblock %}

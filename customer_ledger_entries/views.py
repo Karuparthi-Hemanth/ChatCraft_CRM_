@@ -14,43 +14,47 @@ from django.db.models import Max
 # Create your views here.
 def getCustomerLedgerEntry(request : HttpRequest):
     data = request.GET
-    CustomerLedgerEntry = CustomerLedgerEntry.objects.all()
+    CustomerLedgerEntries = CustomerLedgerEntry.objects.all()
 
     filter_fields =["CUSTOMER_LEDGER_ENTRY_ID", "CUSTOMER_ID", "SALES_INVOICE_ID", "AMOUNT", "PAID_DATE"]
     
     for field in filter_fields:
         param_value = data.get(field)
         if param_value:
-            CustomerLedgerEntry = CustomerLedgerEntry.filter(**{field: param_value})
+            CustomerLedgerEntries = CustomerLedgerEntries.filter(**{field: param_value})
             
-    CustomerLedgerEntry_list = []
+        print(CustomerLedgerEntries)
+    CustomerLedgerEntrieslist = []
 
-    for customerledger in CustomerLedgerEntry:
+    for customerledger in CustomerLedgerEntries:
         customer_ledger_details = {
             "CUSTOMER_LEDGER_ENTRY_ID":customerledger.CUSTOMER_LEDGER_ENTRY_ID,
-            "CUSTOMER_ID": customerledger.CUSTOMER_ID,
-            "SALES_INVOICE_ID": customerledger.SALES_INVOICE_ID,
+            "CUSTOMER_ID": str(customerledger.CUSTOMER_ID),
+            "SALES_INVOICE_ID": str(customerledger.SALES_INVOICE_ID),
             "AMOUNT": customerledger.AMOUNT,
-            "PAID_DATE": customerledger.PAID_DATE,
+            "PAID_DATE": str(customerledger.PAID_DATE),
         }
-        CustomerLedgerEntry_list.append(customer_ledger_details)
+        CustomerLedgerEntrieslist.append(customer_ledger_details)
 
-    ledger_data = json.dumps(CustomerLedgerEntry_list, indent=4)
-    print(ledger_data)
-    return HttpResponse(ledger_data, content_type="text/plain")
-    # return render(request, 'Customers/display_customers.html', {'customers':customers})
+    ledger_data = json.dumps(CustomerLedgerEntrieslist, indent=4)
+    # return HttpResponse(ledger_data, content_type="text/plain")
+    return render(request, 'CustomerLedgerEntry/display_customer_ledger_entries.html', {'CustomerLedgerEntries':CustomerLedgerEntries,'form':CustomerLedgerEntryForm()})
 
 @csrf_exempt
 def addCustomerLedgerEntry(request : HttpRequest):
-    data=request.POST.copy()
-    form = CustomerLedgerEntryForm(data)
-    if form.is_valid():
-        form.save()
-        return HttpResponse("added")
+    if request.method == 'POST':
+        data=request.POST.copy()
+        form = CustomerLedgerEntryForm(data)
+        if form.is_valid():
+            form.save()
+            # return HttpResponse("added")
+            return redirect('/customer_ledger_entries/get/')
+        else:
+            error_json = form.errors.as_json()
+            return HttpResponse(error_json, content_type='application/json')
     else:
-        error_json = form.errors.as_json()
-        return HttpResponse(error_json, content_type='application/json')
-
+        form = CustomerLedgerEntryForm()
+    return render(request, 'CustomerLedgerEntry/save_customer_ledger_entry.html', {'form':form})    
 
 @csrf_exempt
 def editCustomerLedgerEntry(request, customer_ledger_entry_id):
@@ -59,22 +63,22 @@ def editCustomerLedgerEntry(request, customer_ledger_entry_id):
         form = CustomerLedgerEntryForm(request.POST, instance=instance)
         print(form.errors)
         if form.is_valid():
-            print("Form Data:", form.cleaned_data)
+            # print("Form Data:", form.cleaned_data)
             form.save()
             # Redirect to a success page or show a success message
-            return HttpResponse("Sales Order Product created successfully")
+            # return HttpResponse("Sales Order Product created successfully")
+            return redirect('/customer_ledger_entries/get/')
         else:
             error_json = form.errors.as_json()
             return HttpResponse(error_json, content_type='application/json')
     else:
         form = CustomerLedgerEntryForm(instance=instance)
-    return HttpResponse("updated")
-    # return render(request, 'Customer/edit_Customer.html', {'form': form, 'instance': instance})
+    # return HttpResponse("updated")
+    return render(request, 'CustomerLedgerEntry/save_customer_ledger_entry.html', {'form': form, 'instance': instance})
 
 @csrf_exempt
 def deleteCustomerLedgerEntry(request,customer_ledger_entry_id):
     sop = CustomerLedgerEntry.objects.filter(CUSTOMER_LEDGER_ENTRY_ID=customer_ledger_entry_id)
     sop.delete()
-    return HttpResponse("deleted")
-
-    # return redirect('/customers/get/')
+    # return HttpResponse("deleted")
+    return redirect('/customer_ledger_entries/get/')

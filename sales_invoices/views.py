@@ -1,7 +1,4 @@
-from django.shortcuts import render
-
-# Create your views here.
-from django.shortcuts import render,get_object_or_404
+from django.shortcuts import render,get_object_or_404, redirect
 from .models import SalesInvoice
 from .forms import SalesInvoiceForm
 from sales_orders.models import SalesOrder
@@ -13,30 +10,28 @@ import json
 
 @csrf_exempt
 def addSalesInvoice(request):
-    data=request.POST.copy()
-    form = SalesInvoiceForm(data)
-    if form.is_valid():
-        data["TOTAL_ITEMS"] = SalesOrderProduct.objects.filter(SALES_ORDER_ID = data["SALES_ORDER_ID"]).values("PRODUCT_ID").distinct().count()
-        so = SalesOrder.objects.get(SALES_ORDER_ID = data["SALES_ORDER_ID"])
-        data["TOTAL_AMOUNT"] = so.AMOUNT
+    if request.method == 'POST':
+        data=request.POST.copy()
         form = SalesInvoiceForm(data)
         if form.is_valid():
-            form.save()
-            return HttpResponse("added")
+            data["TOTAL_ITEMS"] = SalesOrderProduct.objects.filter(SALES_ORDER_ID = data["SALES_ORDER_ID"]).values("PRODUCT_ID").distinct().count()
+            so = SalesOrder.objects.get(SALES_ORDER_ID = data["SALES_ORDER_ID"])
+            data["TOTAL_AMOUNT"] = so.AMOUNT
+
+            form = SalesInvoiceForm(data)
+            if form.is_valid():
+                form.save()
+                # return HttpResponse("added")
+                return redirect('/sales_invoice/get/')
+            else:
+                error_json = form.errors.as_json()
+                # return HttpResponse(error_json, content_type='application/json')
         else:
             error_json = form.errors.as_json()
-            return HttpResponse(error_json, content_type='application/json')
+        # return HttpResponse(error_json, content_type='application/json')
     else:
-        error_json = form.errors.as_json()
-        return HttpResponse(error_json, content_type='application/json')
-    
-
-
-
-
-
-
-
+        form = SalesInvoiceForm()
+    return render(request, 'SalesInvoice/save_sales_invoice.html', {'form':form})    
 
 def getSalesInvoice(request : HttpRequest):
     data = request.GET
@@ -56,14 +51,14 @@ def getSalesInvoice(request : HttpRequest):
             "SALES_INVOICE_ID":sales_invoice.SALES_INVOICE_ID,
             "SALES_ORDER_ID": sales_invoice.SALES_ORDER_ID.SALES_ORDER_ID,
             "CUSTOMER_ID": sales_invoice.CUSTOMER_ID.CUSTOMER_ID,
-            "INVOICE_DATE": sales_invoice.INVOICE_DATE,
+            "INVOICE_DATE": str(sales_invoice.INVOICE_DATE),
             "STATUS" : sales_invoice.STATUS,
         }
         sales_invoice_list.append(sales_invoice_details)
 
     sales_invoice_data = json.dumps(sales_invoice_list, indent=4)
-    return HttpResponse(sales_invoice_data)
-
+    # return HttpResponse(sales_invoice_data)
+    return render(request, 'SalesInvoice/display_sales_invoice.html', {'sales_invoices':sales_invoices, 'form':SalesInvoiceForm()})
     
 @csrf_exempt
 def editSalesInvoice(request, sales_invoice_id):
@@ -73,13 +68,18 @@ def editSalesInvoice(request, sales_invoice_id):
         if form.is_valid():
             form.save()
             # Redirect to a success page or show a success message
-            return HttpResponse("saved")
+            # return HttpResponse("saved")
+            return redirect('/sales_invoices/get/') 
         else:
             error_json = form.errors.as_json()
             return HttpResponse(error_json, content_type='application/json')
+    else:
+        form = SalesInvoiceForm(instance=instance)
+    return render(request, 'SalesInvoice/save_sales_invoice.html', {'form': form, 'instance': instance})
 
 @csrf_exempt
 def deleteSalesInvoice(request, sales_invoice_id):
     sale_invoice = get_object_or_404(SalesInvoice, pk=sales_invoice_id)
     sale_invoice.delete()
-    return HttpResponse('deleted')
+    # return HttpResponse('deleted')
+    return redirect('/sales_invoices/get')

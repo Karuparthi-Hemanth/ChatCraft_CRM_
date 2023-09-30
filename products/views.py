@@ -35,7 +35,7 @@ def getProduct(request : HttpRequest):
 
     # Convert the product_list to JSON
     product_data = json.dumps(product_list, indent=4)
-    return HttpResponse(product_data)
+    return render(request, 'Products/display_products.html', {'products':products, 'form':ProductForm()})
 
 @csrf_exempt
 def addProduct(request : HttpRequest):
@@ -43,10 +43,11 @@ def addProduct(request : HttpRequest):
         form = ProductForm(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponse("added")
+            return redirect('/products/get/')
     else:
-        error_json = form.errors.as_json()
-        return HttpResponse(error_json, content_type='application/json')
+        form = ProductForm()
+
+    return render(request, 'Products/save_product.html', {'form': form})
 
 @csrf_exempt
 def editProduct(request, product_id):
@@ -57,10 +58,11 @@ def editProduct(request, product_id):
         if form.is_valid():
             form.save()
             # Redirect to a success page or show a success message
-            return HttpResponse("edited") 
+            return redirect('/products/get/') 
     else:
-        error_json = form.errors.as_json()
-        return HttpResponse(error_json, content_type='application/json')
+        form = ProductForm(instance=instance)
+    # return HttpResponse("updated")
+    return render(request, 'Products/save_Product.html', {'form': form, 'instance': instance})
 
 @csrf_exempt
 def deleteProduct(request, product_id):
