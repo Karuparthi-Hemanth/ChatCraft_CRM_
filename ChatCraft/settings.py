@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'chat',
     'products',
     'home',
+    'users',
     'customer_ledger_entries',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -64,7 +65,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': ['templates','customer_ledger_entries/templates','customers/templates',
                  'home/templates','products/templates','sales_invoices/templates',
-                 'sales_order_products/templates','sales_orders/templates'],
+                 'sales_order_products/templates','sales_orders/templates','users/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,3 +132,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = 'http://127.0.0.1:8000/'
+
+LOGOUT_REDIRECT_URL = '/'

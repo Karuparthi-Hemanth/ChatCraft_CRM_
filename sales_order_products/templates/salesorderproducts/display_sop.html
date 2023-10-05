@@ -2,11 +2,13 @@
 
 {% block extra_nav %}
 <li class="nav-item">
-    <a class="nav-link" href="/sales_orders/add/" style="color: white;">Add Sales Order</a>
+    <a class="nav-link" href="/sales_order_products/add/{{ sales_order_id }}" style="color: white;">Add Sales Order Product</a>
 </li>
 {% endblock %}
 {% block content %}
-<h1 class="page-title">Sales Orders</h1>
+
+<h1 class="page-title">Sales Order Products</h1>
+<br><br>
 <form method="get" novalidate>
     {% csrf_token %}
     {{ form.as_p }}
@@ -16,28 +18,26 @@
     <thead>
         <tr class="table-header">
             <th>Sales Order ID</th>
-            <th>Customer ID</th>
-            <th>Order Date</th>
+            <th>Seq No</th>
+            <th>Product ID</th>
+            <th>Quantity</th>
             <th>Amount</th>
-            <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        {% for sales_order in sales_orders %}
+        {% for sop in sales_order_products %}
         <tr>
-            <td><a href='/sales_order_products/get/{{ sales_order.SALES_ORDER_ID }}/'>
-            {{ sales_order.SALES_ORDER_ID}}</a></td>
-            <td>{{ sales_order.CUSTOMER_ID }}</td>
-            <td>{{ sales_order.ORDERDATE }}</td>
-            <td>{{ sales_order.AMOUNT }}</td>
-            <td>{{ sales_order.STATUS }}</td>
+            <td>{{ sop.SALES_ORDER_ID }}</td>
+            <td>{{ sop.SEQ_NUM }}</td>
+            <td>{{ sop.PRODUCT_ID }}</td>
+            <td>{{ sop.QUANTITY }}</td>
+            <td>{{ sop.AMOUNT }}</td>
             <td>
-                <a href="/sales_orders/edit/{{ sales_order.SALES_ORDER_ID }}/" class="action-link">Edit</a> |
-                <a href="/sales_orders/delete/{{ sales_order.SALES_ORDER_ID }}/" class="action-link">Delete</a>
+                <a href="/sales_order_products/edit/{{ sop.SALES_ORDER_ID }}/{{ sop.SEQ_NUM }}/" class="action-link">Edit</a> |
+                <a href="/sales_order_products/delete/{{ sop.SALES_ORDER_ID }}/{{ sop.SEQ_NUM }}/" class="action-link">Delete</a>
             </td>
         </tr>
-
         {% endfor %}
     </tbody>
 </table>
@@ -76,6 +76,7 @@ color: #007bff;
 margin-right: 5px;
 }
 
+/* Add this to your existing CSS file or style block */
 form {
 margin-top: 20px;
 padding: 10px;
@@ -98,4 +99,5 @@ color: white;
 border-radius: 4px;
 cursor: pointer;
 }
+
 {% endblock %}

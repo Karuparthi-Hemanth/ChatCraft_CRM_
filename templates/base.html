@@ -135,9 +135,39 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/">Contact</a>
                 </li>
+                {%if user.is_authenticated%}
+                <li class="nav-item">
+                    <a class="nav-link" href="
+
+                    {%url 'logout' %}">Log Out</a>
+                </li>
+                {%else%}
+                <li class="nav-item">
+                    <a class="nav-link" href="
+
+                    {%url 'register' %}">Register</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="
+
+                    {%url 'login' %}">Log In</a>
+                </li>
+                {%endif%}
             </ul>
         </div>
     </nav>
+
+    <div class="container">
+        {%if messages%}
+        {% for message in messages%}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {%endfor%}
+        {%endif%}
+    </div>
 
     <div class="grid-container">
         <!-- Main Content -->
@@ -183,9 +213,9 @@
             const chatInput = document.getElementById('chat-input');
             const sendMessageBtn = document.getElementById('send-message');
 
-            let module, action, columns = {}, columns_keys=[], filter={};
+            let module, action, columns = {}, columns_keys = [], filter = {};
             let all_modules = ['products', 'sales_orders', 'sales_invoices', 'customers',
-                                'customer_ledger_entries', 'sales_order_products'];
+                'customer_ledger_entries', 'sales_order_products'];
             let all_actions = ['add', 'edit', 'delete'];
 
             function appendMessage(message, type) {
@@ -218,24 +248,24 @@
                             headers: {
                                 'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({'module':module,'action':action}),
+                            body: JSON.stringify({ 'module': module, 'action': action }),
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            columns_keys = JSON.parse(JSON.stringify(data));
-                        })
-                        .then(()=>{
-                            appendMessage(`Enter the following Columns for ${module} to perform ${action}.`, 'bot');
-                            appendMessage(`Enter the ${columns_keys[Object.keys(columns).length]}`, 'bot')
-                        }
-                        )
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
-                        
+                            .then(response => response.json())
+                            .then(data => {
+                                columns_keys = JSON.parse(JSON.stringify(data));
+                            })
+                            .then(() => {
+                                appendMessage(`Enter the following Columns for ${module} to perform ${action}.`, 'bot');
+                                appendMessage(`Enter the ${columns_keys[Object.keys(columns).length]}`, 'bot')
+                            }
+                            )
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
+
                         // columns_keys = ['PRODUCT_NAME', 'UOM', 'COST','QUANTITY_ON_HAND','STATUS'];
                         // expected_cols = columns_keys.length;
-                        
+
                     }
                     else {
                         appendMessage('Enter valid action.', 'bot');
@@ -243,32 +273,32 @@
                 }
                 else if (Object.keys(columns).length != columns_keys.length) {
                     appendMessage(`${input}`, 'user');
-                    columns[columns_keys[Object.keys(columns).length]]=input;
-                    if(action=='edit' && Object.keys(filter).length==0 && Object.keys(columns).length == columns_keys.length){
+                    columns[columns_keys[Object.keys(columns).length]] = input;
+                    if (action == 'edit' && Object.keys(filter).length == 0 && Object.keys(columns).length == columns_keys.length) {
                         alert(columns);
                         alert(filter);
-                        filter={...columns};
-                        columns={};
+                        filter = { ...columns };
+                        columns = {};
                     }
                     else if (Object.keys(columns).length == columns_keys.length) {
-                        if(action=='delete'){
-                            filter=columns;
-                            columns={};
+                        if (action == 'delete') {
+                            filter = columns;
+                            columns = {};
                         }
                         fetch('/perform/', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({'module':module,'action':action,'filter':filter,'new_data':columns}),
+                            body: JSON.stringify({ 'module': module, 'action': action, 'filter': filter, 'new_data': columns }),
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            appendMessage(`${data}`,'bot');
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
+                            .then(response => response.json())
+                            .then(data => {
+                                appendMessage(`${data}`, 'bot');
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
                         appendMessage('Action was successfully performed', 'bot');
                         appendMessage('Wanna Continue?', 'bot');
                     }
