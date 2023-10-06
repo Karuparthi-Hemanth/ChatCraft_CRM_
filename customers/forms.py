@@ -8,6 +8,6 @@ class CustomerForm(forms.ModelForm):
 
     def clean_BALANCE_DUE(self):
         balance = self.cleaned_data.get("BALANCE_DUE")
-        if balance==10:
-            raise forms.ValidationError("balance canot be 10.")
+        if balance<0:
+            raise forms.ValidationError("balance cannot be negative.")
         return balance

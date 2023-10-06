@@ -5,7 +5,11 @@ from sales_orders.models import SalesOrder
 from sales_order_products.models import SalesOrderProduct
 from django.http import HttpRequest,HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from sales_order_products.views import getSalesOrderProduct
 import json
+from django.core import serializers
+from products.models import Product
+from customers.models import Customer
 # Create your views here.
 
 @csrf_exempt
@@ -20,9 +24,11 @@ def addSalesInvoice(request):
 
             form = SalesInvoiceForm(data)
             if form.is_valid():
+                deductProduct(request,data["SALES_ORDER_ID"])
+                updatecustomerbalance(data)
                 form.save()
                 # return HttpResponse("added")
-                return redirect('/sales_invoice/get/')
+                return redirect('/sales_invoices/get/')
             else:
                 error_json = form.errors.as_json()
                 # return HttpResponse(error_json, content_type='application/json')
@@ -83,3 +89,24 @@ def deleteSalesInvoice(request, sales_invoice_id):
     sale_invoice.delete()
     # return HttpResponse('deleted')
     return redirect('/sales_invoices/get')
+
+def deductProduct(request,sales_order_id):
+    sales_order_products = SalesOrderProduct.objects.filter(SALES_ORDER_ID=sales_order_id)
+
+    # Iterate through each sales_order_product object
+    for sales_order_product in sales_order_products:
+        product = sales_order_product.PRODUCT_ID 
+        product_id = product.PRODUCT_ID
+        prod = Product.objects.get(PRODUCT_ID=product_id)
+        new_quantity=prod.QUANTITY_ON_HAND-sales_order_product.QUANTITY
+        prod.QUANTITY_ON_HAND = new_quantity
+        prod.save()
+    #make status of sales_order billed
+    sales_order=SalesOrder.objects.get(SALES_ORDER_ID=sales_order_id)
+    sales_order.STATUS='billed'
+    sales_order.save()
+
+def updatecustomerbalance(data):
+    customer=Customer.objects.get(CUSTOMER_ID=data['CUSTOMER_ID'])
+    customer.BALANCE_DUE=customer.BALANCE_DUE+data['TOTAL_AMOUNT']
+    return data

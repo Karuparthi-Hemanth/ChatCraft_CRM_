@@ -35,7 +35,7 @@ def perform(request):
     data = json.loads(request.body.decode('utf-8'))
     module = data.get("module")
     action = data.get("action")
-    filter_data = data.get("filter", {})  # Directly access filter as a dictionary
+    filter_data = data.get("filter", {}) # Directly access filter as a dictionary
     new_data = data.get("new_data", {})  # Directly access new_data as a dictionary
     keys_to_delete = []
     for key in filter_data.keys():

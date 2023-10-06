@@ -9,6 +9,8 @@ import json
 from django.core import serializers
 from .forms import SalesOrderProductForm
 from django.db.models import Max
+from products.models import Product
+from sales_orders.models import SalesOrder
 
 # Create your views here.
 def getSalesOrderProduct(request : HttpRequest,sales_order_id):
@@ -48,6 +50,7 @@ def addSalesorderProduct(request : HttpRequest,sales_order_id):
         
         data["SALES_ORDER_ID"]=sales_order_id
         data["SEQ_NUM"]=max_seq_num+1
+        data=updatetotals(data)
         form = SalesOrderProductForm(data)
         if form.is_valid():
             form.save()
@@ -65,7 +68,9 @@ def addSalesorderProduct(request : HttpRequest,sales_order_id):
 def editSalesOrderProduct(request, sales_order_id,seq_num):
     instance = get_object_or_404(SalesOrderProduct, SALES_ORDER_ID=sales_order_id, SEQ_NUM=seq_num)
     if request.method == 'POST':
-        form = SalesOrderProductForm(request.POST, instance=instance)
+        data=request.POST.copy()
+        data=updatetotals(data)
+        form = SalesOrderProductForm(data, instance=instance)
         # print(form.errors)
         if form.is_valid():
             # print("Form Data:", form.cleaned_data)
@@ -87,3 +92,29 @@ def deleteSalesOrderProduct(request,sales_order_id,seq_num):
     sop.delete()
     # return HttpResponse("deleted")
     return redirect('/sales_order_products/get/'+str(sales_order_id)+'/')
+
+def updatetotals(data):
+    prevamt = 0
+    product = Product.objects.get(PRODUCT_ID=data['PRODUCT_ID'])
+
+    try:
+        prev = SalesOrderProduct.objects.get(SALES_ORDER_ID=data['SALES_ORDER_ID'], SEQ_NUM=data['SEQ_NUM'])
+        prevamt = prev.AMOUNT
+    except SalesOrderProduct.DoesNotExist:
+        prevamt = 0  
+
+    # Calculate the new AMOUNT based on QUANTITY and COST
+    data['AMOUNT'] = int(data['QUANTITY']) * product.COST
+
+    # Update the SalesOrder's AMOUNT field
+    sales_order = SalesOrder.objects.get(SALES_ORDER_ID=data['SALES_ORDER_ID'])
+    sales_order.AMOUNT += int(data['AMOUNT'])  # Add the new AMOUNT
+
+    # If prevamt is not 0, subtract it from the AMOUNT
+    if prevamt != 0:
+        sales_order.AMOUNT -= prevamt
+
+    # Save the updated SalesOrder object
+    sales_order.save()
+
+    return data
