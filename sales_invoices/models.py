@@ -6,7 +6,7 @@ from sales_orders.models import SalesOrder
 class SalesInvoice(models.Model):
     SALES_INVOICE_ID=models.AutoField(primary_key=True)
     SALES_ORDER_ID = models.ForeignKey(SalesOrder,on_delete=models.CASCADE,db_column="SALES_ORDER_ID")
-    CUSTOMER_ID=models.ForeignKey(Customer,on_delete=models.CASCADE,db_column="CUSTOMER_ID")
+    CUSTOMER_ID=models.ForeignKey(Customer,on_delete=models.CASCADE,db_column="CUSTOMER_ID",null = True,blank=True)
     TOTAL_AMOUNT=models.IntegerField(null=True,blank=True)
     TOTAL_ITEMS=models.IntegerField(null=True,blank=True)
     INVOICE_DATE = models.DateField(null=True,blank=True)

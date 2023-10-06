@@ -21,7 +21,6 @@ def addSalesInvoice(request):
             data["TOTAL_ITEMS"] = SalesOrderProduct.objects.filter(SALES_ORDER_ID = data["SALES_ORDER_ID"]).values("PRODUCT_ID").distinct().count()
             so = SalesOrder.objects.get(SALES_ORDER_ID = data["SALES_ORDER_ID"])
             data["TOTAL_AMOUNT"] = so.AMOUNT
-
             form = SalesInvoiceForm(data)
             if form.is_valid():
                 deductProduct(request,data["SALES_ORDER_ID"])
@@ -31,13 +30,13 @@ def addSalesInvoice(request):
                 return redirect('/sales_invoices/get/')
             else:
                 error_json = form.errors.as_json()
-                # return HttpResponse(error_json, content_type='application/json')
+                return HttpResponse(error_json, content_type='application/json')
         else:
             error_json = form.errors.as_json()
-        # return HttpResponse(error_json, content_type='application/json')
+            return HttpResponse(error_json, content_type='application/json')
     else:
         form = SalesInvoiceForm()
-    return render(request, 'SalesInvoice/save_sales_invoice.html', {'form':form})    
+        return render(request, 'SalesInvoice/save_sales_invoice.html', {'form':form})    
 
 def getSalesInvoice(request : HttpRequest):
     data = request.GET
@@ -56,7 +55,7 @@ def getSalesInvoice(request : HttpRequest):
         sales_invoice_details = {
             "SALES_INVOICE_ID":sales_invoice.SALES_INVOICE_ID,
             "SALES_ORDER_ID": sales_invoice.SALES_ORDER_ID.SALES_ORDER_ID,
-            "CUSTOMER_ID": sales_invoice.CUSTOMER_ID.CUSTOMER_ID,
+            "CUSTOMER_ID": sales_invoice.CUSTOMER_ID_id,
             "INVOICE_DATE": str(sales_invoice.INVOICE_DATE),
             "STATUS" : sales_invoice.STATUS,
         }
@@ -103,10 +102,11 @@ def deductProduct(request,sales_order_id):
         prod.save()
     #make status of sales_order billed
     sales_order=SalesOrder.objects.get(SALES_ORDER_ID=sales_order_id)
-    sales_order.STATUS='billed'
+    sales_order.STATUS='invoiced'
     sales_order.save()
 
 def updatecustomerbalance(data):
     customer=Customer.objects.get(CUSTOMER_ID=data['CUSTOMER_ID'])
     customer.BALANCE_DUE=customer.BALANCE_DUE+data['TOTAL_AMOUNT']
+    customer.save()
     return data
