@@ -88,7 +88,12 @@ def editSalesOrderProduct(request, sales_order_id,seq_num):
 
 @csrf_exempt
 def deleteSalesOrderProduct(request,sales_order_id,seq_num):
-    sop = SalesOrderProduct.objects.filter(SALES_ORDER_ID=sales_order_id,SEQ_NUM=seq_num)
+
+    sop = SalesOrderProduct.objects.get(SALES_ORDER_ID=sales_order_id,SEQ_NUM=seq_num)
+    so=SalesOrder.objects.get(SALES_ORDER_ID= sales_order_id)
+    
+    so.AMOUNT -=int(sop.AMOUNT)
+    so.save()
     sop.delete()
     # return HttpResponse("deleted")
     return redirect('/sales_order_products/get/'+str(sales_order_id)+'/')

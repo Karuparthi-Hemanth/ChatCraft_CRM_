@@ -10,7 +10,7 @@ import json
 from django.core import serializers
 from .forms import CustomerLedgerEntryForm
 from django.db.models import Max
-
+from customers.models import Customer
 # Create your views here.
 def getCustomerLedgerEntry(request : HttpRequest):
     data = request.GET
@@ -46,6 +46,7 @@ def addCustomerLedgerEntry(request : HttpRequest):
         data=request.POST.copy()
         form = CustomerLedgerEntryForm(data)
         if form.is_valid():
+            updatecustomerbalance(data['CUSTOMER_ID'],data['AMOUNT'])
             form.save()
             # return HttpResponse("added")
             return redirect('/customer_ledger_entries/get/')
@@ -82,3 +83,10 @@ def deleteCustomerLedgerEntry(request,customer_ledger_entry_id):
     sop.delete()
     # return HttpResponse("deleted")
     return redirect('/customer_ledger_entries/get/')
+
+@csrf_exempt
+def updatecustomerbalance(customer_id,amount):
+    customer=Customer.objects.get(CUSTOMER_ID=customer_id)
+    customer.BALANCE_DUE=int(customer.BALANCE_DUE)-int(amount)
+    customer.save()
+
