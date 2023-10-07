@@ -33,12 +33,12 @@ def addSalesInvoice(request):
                 updatecustomerbalance(sales_invoice_json)
                 # return HttpResponse("added")
                 return redirect('/sales_invoices/get/')
-            else:
-                error_json = form.errors.as_json()
-                return HttpResponse(error_json, content_type='application/json')
-        else:
-            error_json = form.errors.as_json()
-            return HttpResponse(error_json, content_type='application/json')
+            # else:
+            #     error_json = form.errors.as_json()
+            #     return HttpResponse(error_json, content_type='application/json')
+        # else:
+        #     error_json = form.errors.as_json()
+        #     return HttpResponse(error_json, content_type='application/json')
     else:
         form = SalesInvoiceForm()
         return render(request, 'SalesInvoice/save_sales_invoice.html', {'form':form})    
@@ -80,9 +80,9 @@ def editSalesInvoice(request, sales_invoice_id):
             # Redirect to a success page or show a success message
             # return HttpResponse("saved")
             return redirect('/sales_invoices/get/') 
-        else:
-            error_json = form.errors.as_json()
-            return HttpResponse(error_json, content_type='application/json')
+        # else:
+        #     error_json = form.errors.as_json()
+        #     return HttpResponse(error_json, content_type='application/json')
     else:
         form = SalesInvoiceForm(instance=instance)
     return render(request, 'SalesInvoice/save_sales_invoice.html', {'form': form, 'instance': instance})

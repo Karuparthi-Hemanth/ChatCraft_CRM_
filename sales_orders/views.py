@@ -46,9 +46,9 @@ def addSalesOrder(request : HttpRequest):
             # return HttpResponse("added")
             return redirect('/sales_orders/get/')
 
-        else:
-            error_json = form.errors.as_json()
-            return HttpResponse(error_json, content_type='application/json')
+        # else:
+        #     error_json = form.errors.as_json()
+        #     return HttpResponse(error_json, content_type='application/json')
     else:
         form = SalesOrderForm()
 
@@ -64,9 +64,9 @@ def editSalesOrder(request, sales_order_id):
             # Redirect to a success page or show a success message
             # return HttpResponse("saved")
             return redirect('/sales_orders/get/')
-        else:
-            error_json = form.errors.as_json()
-            return HttpResponse(error_json, content_type='application/json')
+        # else:
+        #     error_json = form.errors.as_json()
+        #     return HttpResponse(error_json, content_type='application/json')
     else:
         form = SalesOrderForm(instance=instance)
         # return HttpResponse("updated")

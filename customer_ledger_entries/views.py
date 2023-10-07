@@ -11,6 +11,7 @@ from django.core import serializers
 from .forms import CustomerLedgerEntryForm
 from django.db.models import Max
 from customers.models import Customer
+from sales_invoices.models import SalesInvoice
 # Create your views here.
 def getCustomerLedgerEntry(request : HttpRequest):
     data = request.GET
@@ -47,12 +48,13 @@ def addCustomerLedgerEntry(request : HttpRequest):
         form = CustomerLedgerEntryForm(data)
         if form.is_valid():
             updatecustomerbalance(data['CUSTOMER_ID'],data['AMOUNT'])
+            updatesalesinvoice(data)
             form.save()
             # return HttpResponse("added")
             return redirect('/customer_ledger_entries/get/')
-        else:
-            error_json = form.errors.as_json()
-            return HttpResponse(error_json, content_type='application/json')
+        # else:
+        #     error_json = form.errors.as_json()
+        #     return HttpResponse(error_json, content_type='application/json')
     else:
         form = CustomerLedgerEntryForm()
     return render(request, 'CustomerLedgerEntry/save_customer_ledger_entry.html', {'form':form})    
@@ -69,9 +71,9 @@ def editCustomerLedgerEntry(request, customer_ledger_entry_id):
             # Redirect to a success page or show a success message
             # return HttpResponse("Sales Order Product created successfully")
             return redirect('/customer_ledger_entries/get/')
-        else:
-            error_json = form.errors.as_json()
-            return HttpResponse(error_json, content_type='application/json')
+        # else:
+        #     error_json = form.errors.as_json()
+        #     return HttpResponse(error_json, content_type='application/json')
     else:
         form = CustomerLedgerEntryForm(instance=instance)
     # return HttpResponse("updated")
@@ -90,3 +92,12 @@ def updatecustomerbalance(customer_id,amount):
     customer.BALANCE_DUE=int(customer.BALANCE_DUE)-int(amount)
     customer.save()
 
+def updatesalesinvoice(data):
+    sale_invoice=SalesInvoice.objects.get(SALES_INVOICE_ID=data['SALES_INVOICE_ID'])
+    customer_ledger_entries=CustomerLedgerEntry.objects.filter(CUSTOMER_ID=data['CUSTOMER_ID'],SALES_INVOICE_ID=data['SALES_INVOICE_ID'])
+    sum=0
+    for entry in customer_ledger_entries:
+        sum+=int(entry.AMOUNT)
+    if(sum>=int(sale_invoice.TOTAL_AMOUNT)):
+        sale_invoice.STATUS='paid'
+        sale_invoice.save()

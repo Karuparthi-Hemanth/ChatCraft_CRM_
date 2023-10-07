@@ -42,9 +42,9 @@ def addCustomer(request : HttpRequest):
             form.save()
             # return HttpResponse("added")
             return redirect('/customers/get/')
-        else:
-            error_json = form.errors.as_json()
-            return HttpResponse(error_json, content_type='application/json')
+        # else:
+        #     error_json = form.errors.as_json()
+        #     return HttpResponse(error_json, content_type='application/json')
     else:
         form = CustomerForm()
 
@@ -60,9 +60,9 @@ def editCustomer(request, customer_id):
             # Redirect to a success page or show a success message
             # return HttpResponse("saved")
             return redirect('/customers/get/')
-        else:
-            error_json = form.errors.as_json()
-            return HttpResponse(error_json, content_type='application/json')
+        # else:
+        #     error_json = form.errors.as_json()
+        #     return HttpResponse(error_json, content_type='application/json')
     else:
         form = CustomerForm(instance=instance)
         # return HttpResponse("updated")

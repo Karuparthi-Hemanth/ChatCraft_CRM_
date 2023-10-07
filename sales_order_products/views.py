@@ -56,9 +56,9 @@ def addSalesorderProduct(request : HttpRequest,sales_order_id):
             form.save()
             # return HttpResponse("added")
             return redirect('/sales_order_products/get/'+str(sales_order_id)+'/')
-        else:
-            error_json = form.errors.as_json()
-            return HttpResponse(error_json, content_type='application/json')
+        # else:
+        #     error_json = form.errors.as_json()
+        #     return HttpResponse(error_json, content_type='application/json')
     else:
         form = SalesOrderProductForm()
     return render(request, 'salesorderproducts/save_sop.html', {'form': form,'sales_order_id':sales_order_id})
@@ -78,9 +78,9 @@ def editSalesOrderProduct(request, sales_order_id,seq_num):
             # Redirect to a success page or show a success message
             # return HttpResponse("Sales Order Product created successfully")
             return redirect('/sales_order_products/get/'+str(sales_order_id)+'/')
-        else:
-            error_json = form.errors.as_json()
-            return HttpResponse(error_json, content_type='application/json')
+        # else:
+        #     error_json = form.errors.as_json()
+        #     return HttpResponse(error_json, content_type='application/json')
     else:
         form = SalesOrderProductForm(instance=instance)
     # return HttpResponse("updated")
