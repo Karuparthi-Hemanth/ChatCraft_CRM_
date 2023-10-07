@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
+{% block extra_nav %}
+<li class="nav-item">
+    <a class="nav-link" href="/sales_orders/get/">Sales Orders</a>
+</li>
+{% endblock %}
+
 {% block content %}
 <h1>Sales Orders</h1>
 <form method="post">

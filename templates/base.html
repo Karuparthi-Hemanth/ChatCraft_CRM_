@@ -14,12 +14,14 @@
             grid-template-columns: 100%;
             height: 100vh;
             /* Set the grid container height */
+            z-index: -1;
         }
 
         .main-content {
             background-color: #f8f8f8;
             padding: 20px;
             height: 100%;
+            overflow-y: scroll;
             /* Make the main content fill the grid cell */
         }
 
@@ -28,7 +30,8 @@
             padding: 20px;
             height: 100%;
             /* Make the chat dialog fill the grid cell */
-            overflow-y: scroll;
+            /* overflow-y: scroll; */
+            position: fixed;
         }
 
         .chat-container {
@@ -40,7 +43,7 @@
             padding: 20px;
             height: 100%;
             /* Make the chat dialog fill the grid cell */
-            overflow-y: scroll;
+            /* overflow-y: scroll; */
             /* Add vertical scrollbar */
             position: relative;
             /* Add relative positioning */
@@ -110,6 +113,19 @@
             margin-bottom: 10px;
         }
 
+        body {
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxGritEVgDIJlNQdeyaKSL0wHlJUGfHavte5za24PBonz3OvMmyg6ZA92ypbDniHlQz00&usqp=CAU');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        #toggle-chat .badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
         {% block extra_css %}
         {% endblock %}
     </style>
@@ -117,8 +133,8 @@
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: teal;">
-        <a class="navbar-brand" href="#">ChatCraft CRM</a>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #071952;">
+        <a class="navbar-brand" href="/"><h2><i class="fa-regular fa-comments"></i> ChatCraft CRM</h2></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -129,12 +145,6 @@
                     <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
                 </li>
                 {% block extra_nav %}{% endblock %}
-                <li class="nav-item">
-                    <a class="nav-link" href="/">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Contact</a>
-                </li>
                 {%if user.is_authenticated%}
                 <li class="nav-item">
                     <a class="nav-link" href="
@@ -157,7 +167,7 @@
             </ul>
         </div>
     </nav>
-
+    <br><br><br>
     <div class="container">
         {%if messages%}
         {% for message in messages%}
@@ -171,14 +181,14 @@
 
     <div class="grid-container">
         <!-- Main Content -->
-        <div class="main-content">
+        <div class="main-content" style="background-color: #F2F7A1;">
             <!-- Your existing content goes here -->
             {% block content %}
             {% endblock %}
         </div>
 
         <!-- Chat Dialog -->
-        <div class="chat-dialog">
+        <div class="chat-dialog fixed-right">
             <!-- Chat content goes here -->
             <h1 style="position: relative;">Chat</h1>
             <br><br>
@@ -198,10 +208,10 @@
 
     <button id="toggle-chat"
         style="position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; font-size: 16px; background-color: teal; color: white; border: none; border-radius: 5px; cursor: pointer;">
-        <i class="fas fa-times"></i>
+        <i class="fas fa-comment"></i>
+        <span class="badge badge-danger" id="my-badge">2</span>
     </button>
     <!-- Your existing HTML code... -->
-
 
     <!-- Add Bootstrap JS (optional, for dropdowns, toggles, etc.) -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -332,7 +342,7 @@
                 }
             });
 
-            appendMessage('Hi! Welcome', 'bot')
+            appendMessage('Hi! Welcome', 'bot');
             appendMessage('Enter module.', 'bot');
 
             const chatDialog = document.querySelector('.chat-dialog');
@@ -344,15 +354,20 @@
                     chatDialog.style.display = 'block';
                     mainpage.style.gridTemplateColumns = '70% 30%';
                     is_chat_open = true;
+                    document.getElementById('my-badge').innerHTML='';
                 } else {
                     chatDialog.style.display = 'none';
                     mainpage.style.gridTemplateColumns = '100% 0%';
                     is_chat_open = false;
+                    document.getElementById('my-badge').innerHTML = '2';
                 }
             }
             toggleChatButton.addEventListener('click', toggleChat);
         });
     </script>
+    <!-- <div class="footer">
+        <p>&copy; 2023 ChatCraftCRM</p>
+    </div> -->
 </body>
 
 </html>

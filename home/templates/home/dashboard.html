@@ -3,15 +3,21 @@
 {% block content %}
 
 <div class="container" style="text-align: center;">
-    <br><br>
-    <h1>Welcome to ChatCraft CRM</h1>
-    <br><br><br><br>
+    <br>
+    <div class="jumbotron" style="background-color: #35A29F; color: white; border-radius: 20px;">
+        <i class="fas fa-comments fa-5x float-left" style="margin-left: 30px;"></i>
+        <h1>Welcome to ChatCraft CRM</h1>
+        <br>
+        <p>Your trusted platform for managing customer relationships.</p>
+        <hr>
+        <p>Explore our features and start streamlining your business processes.</p>
+    </div>
+    <br>
     <div class="row">
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-shopping-cart"></i>  Products</h5>
-                    <p class="card-text">Manage your contacts with ease.</p>
+                    <h5 class="card-title"><i class="fas fa-shopping-cart"></i> Products</h5>
                     <a href="products/get/" class="btn btn-primary">Go To</a>
                 </div>
             </div>
@@ -19,8 +25,7 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-user"></i>  Customers</h5>
-                    <p class="card-text">Track interactions and communications.</p>
+                    <h5 class="card-title"><i class="fas fa-user"></i> Customers</h5>
                     <a href="customers/get/" class="btn btn-primary">Go To</a>
                 </div>
             </div>
@@ -28,33 +33,41 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-file-alt"></i>  Sales Orders</h5>
-                    <p class="card-text">Monitor sales and leads.</p>
+                    <h5 class="card-title"><i class="fas fa-file-alt"></i> Sales Orders</h5>
                     <a href="sales_orders/get/" class="btn btn-primary">Go To</a>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-book"></i>  Customer Ledger Entry</h5>
-                    <p class="card-text">Automate tasks and workflows.</p>
-                    <a href="customer_ledger_entries/get/" class="btn btn-primary">Go To</a>
-                </div>
+    <div class="container d-flex justify-content-center">
+        <div class="card mx-auto" style="width: 21rem; margin: 40px;">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-book"></i> Customer Ledger Entry</h5>
+                <a href="customer_ledger_entries/get/" class="btn btn-primary">Go To</a>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-file-invoice"></i>  Sales Invoices</h5>
-                    <p class="card-text">Generate insightful reports.</p>
-                    <a href="sales_invoices/get/" class="btn btn-primary">Go To</a>
-                </div>
+        <div class="card mx-auto" style="width: 21rem; margin: 40px;">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-file-invoice"></i> Sales Invoices</h5>
+                <a href="sales_invoices/get/" class="btn btn-primary">Go To</a>
             </div>
         </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block extra_css %}
+.card {
+transition: transform 0.3s; /* Add transition effect */
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+background-color:#088395;
+color:white;
+}
+
+.card:hover {
+transform: scale(1.10); /* Increase scale on hover */
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
 
 {% endblock %}

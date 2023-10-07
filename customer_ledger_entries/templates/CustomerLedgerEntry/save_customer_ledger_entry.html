@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
 
+{% block extra_nav %}
+<li class="nav-item">
+    <a class="nav-link" href="/customer_ledger_entries/get/">Customer Ledger Entries</a>
+</li>
+{% endblock %}
 {% block content %}
 <h1>Customer Ledger Entries</h1>
+<br><br><br>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Save</button>
 </form>
 {% endblock %} 
-

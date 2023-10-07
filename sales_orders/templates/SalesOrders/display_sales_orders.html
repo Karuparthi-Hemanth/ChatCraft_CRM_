@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
 <h1 class="page-title">Sales Orders</h1>
-<form method="get" novalidate>
+<form method="get" novalidate style="width: 560px;">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Search</button>

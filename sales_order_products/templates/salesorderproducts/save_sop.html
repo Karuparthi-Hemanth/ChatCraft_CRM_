@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
+{% block extra_nav %}
+<li class="nav-item">
+    <a class="nav-link" href="/sales_order_products/get/">Sales Order Products</a>
+</li>
+{% endblock %}
+
 {% block content %}
 <h1>Sales Order Products {{ sales_order_id }}</h1>
 <br><br>
