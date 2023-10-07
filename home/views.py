@@ -84,3 +84,4 @@ def perform(request):
         return HttpResponse("Records inserted successfully")
 
     return HttpResponse("Invalid action", status=200)
+

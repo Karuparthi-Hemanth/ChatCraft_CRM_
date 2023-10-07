@@ -9,6 +9,7 @@ from sales_order_products.views import getSalesOrderProduct
 import json
 from django.core import serializers
 from products.models import Product
+from django.forms.models import model_to_dict
 from customers.models import Customer
 # Create your views here.
 
@@ -24,8 +25,12 @@ def addSalesInvoice(request):
             form = SalesInvoiceForm(data)
             if form.is_valid():
                 deductProduct(request,data["SALES_ORDER_ID"])
-                updatecustomerbalance(data)
-                form.save()
+                sales_invoice_instance = form.save()
+                # Convert the instance data to a dictionary
+                sales_invoice_data = model_to_dict(sales_invoice_instance)
+                # Convert the dictionary to a JSON string
+                sales_invoice_json = json.dumps(sales_invoice_data)
+                updatecustomerbalance(sales_invoice_json)
                 # return HttpResponse("added")
                 return redirect('/sales_invoices/get/')
             else:
@@ -106,7 +111,8 @@ def deductProduct(request,sales_order_id):
     sales_order.save()
 
 def updatecustomerbalance(data):
-    customer=Customer.objects.get(CUSTOMER_ID=data['CUSTOMER_ID'])
-    customer.BALANCE_DUE=customer.BALANCE_DUE+data['TOTAL_AMOUNT']
+    data = json.loads(data)
+    customer=Customer.objects.get(CUSTOMER_ID=int(data["CUSTOMER_ID"]))
+    customer.BALANCE_DUE=customer.BALANCE_DUE+int(data["TOTAL_AMOUNT"])
     customer.save()
     return data
