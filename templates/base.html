@@ -6,14 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatCraft CRM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Add Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .grid-container {
             display: grid;
             grid-template-columns: 100%;
             height: 100vh;
-            /* Set the grid container height */
             z-index: -1;
         }
 
@@ -22,51 +20,100 @@
             padding: 20px;
             height: 100%;
             overflow-y: scroll;
-            /* Make the main content fill the grid cell */
+        }
+
+        body {
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        #toggle-chat .badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        body {
+            font-size: 15px;
+        }
+
+        .custom-table {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            overflow-y: auto;
+        }
+
+        .custom-table th, .custom-table td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        .table-header {
+            background-color: teal;
+            color: white;
+        }
+
+        .custom-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .action-link {
+            text-decoration: none;
+            color: #007bff;
+            margin-right: 5px;
+        }
+
+        form {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f8f8f8;
+            width: 50%;
+        }
+
+        form input[type="text"] {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        form button[type="submit"] {
+            padding: 8px 16px;
+            background-color: teal;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .main-content{
+            background-color: #F2F7A1;
         }
 
         .chat-dialog {
             background-color: #e0e0e0;
             padding: 20px;
             height: 100%;
-            /* Make the chat dialog fill the grid cell */
-            /* overflow-y: scroll; */
-            position: fixed;
-        }
-
-        .chat-container {
-            max-height: 400px;
-        }
-
-        .chat-dialog {
-            background-color: #e0e0e0;
-            padding: 20px;
-            height: 100%;
-            /* Make the chat dialog fill the grid cell */
-            /* overflow-y: scroll; */
-            /* Add vertical scrollbar */
             position: relative;
-            /* Add relative positioning */
             display: none;
             flex-direction: column;
         }
 
         h1 {
             flex: 1;
-            /* Take up 10% of the available height */
             margin: 0;
             position: relative;
         }
 
         .chat-container {
             flex: 7;
-            /* Take up 70% of the available height */
             height: 480px;
             max-height: none;
-            /* Set a maximum height for the chat container */
             overflow-y: scroll;
-            /* Add a vertical scrollbar when needed */
-            /* scroll-behavior: smooth; */
         }
 
         .chat-input {
@@ -104,8 +151,7 @@
             text-align: left;
         }
 
-        .user-message,
-        .bot-message {
+        .user-message,.bot-message {
             border-radius: 15px;
             padding: 10px 15px;
             max-width: 80%;
@@ -113,21 +159,34 @@
             margin-bottom: 10px;
         }
 
-        body {
-            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxGritEVgDIJlNQdeyaKSL0wHlJUGfHavte5za24PBonz3OvMmyg6ZA92ypbDniHlQz00&usqp=CAU');
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-size: cover;
+        .jumbotron{
+            background-color: #35A29F; color: white; border-radius: 20px;
         }
 
-        #toggle-chat .badge {
-            position: absolute;
-            top: 0;
-            right: 0;
+        .grid-container * {
+            color: white;
+            background-color: black;
         }
 
-        {% block extra_css %}
-        {% endblock %}
+        .jumbotron, .card{
+            border: 1px solid white;
+        }
+
+        .user-message{
+            border: 1px solid blue;
+        }
+        
+        .bot-message{
+            border: 1px solid green;
+        }
+
+        table tr{
+            border: 2px solid blue;
+        }
+
+        .table-header{
+            font-size: 20px;
+        }
     </style>
 </head>
 
@@ -144,6 +203,7 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
                 </li>
+                <button id="dark-mode-toggle">Toggle Dark Mode</button>
                 {% block extra_nav %}{% endblock %}
                 {%if user.is_authenticated%}
                 <li class="nav-item">
@@ -181,7 +241,7 @@
 
     <div class="grid-container">
         <!-- Main Content -->
-        <div class="main-content" style="background-color: #F2F7A1;">
+        <div class="main-content">
             <!-- Your existing content goes here -->
             {% block content %}
             {% endblock %}
@@ -219,6 +279,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+
+
+
             const chatMessages = document.getElementById('chat-messages');
             const chatInput = document.getElementById('chat-input');
             const sendMessageBtn = document.getElementById('send-message');

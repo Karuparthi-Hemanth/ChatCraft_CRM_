@@ -5,8 +5,8 @@
     <a class="nav-link" href="/customer_ledger_entries/add/" style="color: white;">Add Customer Ledger Entry</a>
 </li>
 {% endblock %}
-{% block content %}
 
+{% block content %}
 <h1 class="page-title">Customer Ledger Entries</h1>
 <br><br>
 <form method="get" novalidate style="width: 560px;">
@@ -41,63 +41,4 @@
         {% endfor %}
     </tbody>
 </table>
-{% endblock %}
-
-{% block extra_css %}
-body {
-    font-size: 15px;
-}
-
-.custom-table {
-    border-collapse: collapse;
-    width: 100%;
-    border: 1px solid #ccc;
-    margin-top: 20px;
-    overflow-y: auto;
-}
-
-.custom-table th, .custom-table td {
-    text-align: left;
-    padding: 8px;
-}
-
-.table-header {
-    background-color: teal;
-    color: white;
-}
-
-.custom-table tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-.action-link {
-    text-decoration: none;
-    color: #007bff;
-    margin-right: 5px;
-}
-
-/* Add this to your existing CSS file or style block */
-form {
-margin-top: 20px;
-padding: 10px;
-border: 1px solid #ccc;
-background-color: #f8f8f8;
-}
-
-form input[type="text"] {
-padding: 8px;
-margin-right: 10px;
-border: 1px solid #ccc;
-border-radius: 4px;
-}
-
-form button[type="submit"] {
-padding: 8px 16px;
-background-color: teal;
-border: none;
-color: white;
-border-radius: 4px;
-cursor: pointer;
-}
-
 {% endblock %}
