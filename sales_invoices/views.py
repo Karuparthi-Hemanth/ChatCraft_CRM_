@@ -41,7 +41,7 @@ def addSalesInvoice(request):
         #     return HttpResponse(error_json, content_type='application/json')
     else:
         form = SalesInvoiceForm()
-        return render(request, 'SalesInvoice/save_sales_invoice.html', {'form':form})    
+    return render(request, 'SalesInvoice/save_sales_invoice.html', {'form':form})    
 
 def getSalesInvoice(request : HttpRequest):
     data = request.GET
