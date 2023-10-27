@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 from django.http import HttpRequest
+import requests
 
 def MyHomePage(request: HttpRequest):
     if request.user.is_authenticated:
@@ -56,32 +57,59 @@ def perform(request):
       # Filter the queryset based on filter_data
         filter_kwargs = {field: value}
         queryset = queryset.filter(**filter_kwargs)
+
+    url='http://localhost:8000/'+module+'/'+str(action)+'/'
+
     if action == 'delete':
         for row in queryset:
-            row.delete()
+            model_class = apps.get_model(app_label=module, model_name=dict[module])
+            print("before")
+            pk_fields = getPkFieldsInfo(row,model_class._meta.fields)
+            print(pk_fields)
+            print("after")
+            url_copy = url
+            for pk_field in pk_fields:
+                url_copy+=str(pk_field)
+                url_copy+='/'
+            print(url_copy)
+            requests.post(url_copy)
         return HttpResponse("Records deleted successfully")
-
+    
     if action == 'edit':
         for row in queryset:
             # Get column names for the module
             model_class = apps.get_model(app_label=module, model_name=dict[module])
-            model_fields = model_class._meta.get_fields()
-            columns = [field.name for field in model_fields]
-            for field in columns:
-                print(field)
-                if field in new_data:
-                    print(field,row,new_data[field])
-                    setattr(row, field, new_data[field])  # Set new values for fields
+            print("before")
+            pk_fields = getPkFieldsInfo(row,model_class._meta.fields)
+            print(pk_fields)
+            print("after")
+            url_copy = url
+            for pk_field in pk_fields:
+                url_copy+=str(pk_field)
+                url_copy+='/'
+            print(url_copy)
+            requests.post(url_copy,new_data)
             row.save()
         return HttpResponse("Records edited successfully")
 
     if action == 'add':
-        c = model()
-        for key in new_data.keys():
-            setattr(c, key, new_data[key])
-            print(key)
-            c.save()
+        requests.post(url,new_data)
         return HttpResponse("Records inserted successfully")
 
     return HttpResponse("Invalid action", status=200)
 
+def getPkFieldsInfo(row,model):
+    pk_field = []
+    print(row)
+    print(model)
+    unique_field = []
+    for field in model:
+        if field.primary_key:
+            pk_field.append(getattr(row, field.name))
+            break
+    if len(pk_field) == 0:
+        for field in model:
+            if field.unique:
+                unique_field.append(getattr(row, field.name))
+        return unique_field
+    return pk_field
