@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 from django.http import HttpRequest
+import requests
 
 def MyHomePage(request: HttpRequest):
     if request.user.is_authenticated:
