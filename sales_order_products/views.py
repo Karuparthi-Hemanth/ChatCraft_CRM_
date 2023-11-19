@@ -38,7 +38,8 @@ def getSalesOrderProduct(request : HttpRequest,sales_order_id):
 
     OrderProduct_data = json.dumps(SalesOrderProduct_list, indent=4)
     # return HttpResponse(OrderProduct_data, content_type="text/plain")
-    return render(request, 'salesorderproducts/display_sop.html', {'sales_order_products':SalesOrderProduct_list, 'form':SalesOrderProductForm,'sales_order_id':sales_order_id})
+    return render(request, 'salesorderproducts/display_sop.html', 
+                  {'sales_order_products':SalesOrderProduct_list, 'form':SalesOrderProductForm,'sales_order_id':sales_order_id})
 
 @csrf_exempt
 def addSalesorderProduct(request : HttpRequest,sales_order_id):

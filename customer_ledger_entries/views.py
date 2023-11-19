@@ -39,7 +39,8 @@ def getCustomerLedgerEntry(request : HttpRequest):
 
     ledger_data = json.dumps(CustomerLedgerEntrieslist, indent=4)
     # return HttpResponse(ledger_data, content_type="text/plain")
-    return render(request, 'CustomerLedgerEntry/display_customer_ledger_entries.html', {'CustomerLedgerEntries':CustomerLedgerEntries,'form':CustomerLedgerEntryForm()})
+    return render(request, 'CustomerLedgerEntry/display_customer_ledger_entries.html', 
+                  {'CustomerLedgerEntries':CustomerLedgerEntries,'form':CustomerLedgerEntryForm()})
 
 @csrf_exempt
 def addCustomerLedgerEntry(request : HttpRequest):
@@ -94,7 +95,8 @@ def updatecustomerbalance(customer_id,amount):
 
 def updatesalesinvoice(data):
     sale_invoice=SalesInvoice.objects.get(SALES_INVOICE_ID=data['SALES_INVOICE_ID'])
-    customer_ledger_entries=CustomerLedgerEntry.objects.filter(CUSTOMER_ID=data['CUSTOMER_ID'],SALES_INVOICE_ID=data['SALES_INVOICE_ID'])
+    customer_ledger_entries=CustomerLedgerEntry.objects.filter(CUSTOMER_ID=data['CUSTOMER_ID'],
+                                                               SALES_INVOICE_ID=data['SALES_INVOICE_ID'])
     sum=0
     for entry in customer_ledger_entries:
         sum+=int(entry.AMOUNT)

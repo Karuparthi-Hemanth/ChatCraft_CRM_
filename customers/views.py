@@ -40,11 +40,7 @@ def addCustomer(request : HttpRequest):
         form = CustomerForm(request.POST)
         if form.is_valid():
             form.save()
-            # return HttpResponse("added")
             return redirect('/customers/get/')
-        # else:
-        #     error_json = form.errors.as_json()
-        #     return HttpResponse(error_json, content_type='application/json')
     else:
         form = CustomerForm()
 
@@ -57,15 +53,9 @@ def editCustomer(request, customer_id):
         form = CustomerForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
-            # Redirect to a success page or show a success message
-            # return HttpResponse("saved")
             return redirect('/customers/get/')
-        # else:
-        #     error_json = form.errors.as_json()
-        #     return HttpResponse(error_json, content_type='application/json')
     else:
         form = CustomerForm(instance=instance)
-        # return HttpResponse("updated")
         return render(request, 'Customers/save_Customer.html', {'form': form, 'instance': instance})
 
 @csrf_exempt

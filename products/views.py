@@ -17,11 +17,7 @@ def getProduct(request : HttpRequest):
         param_value = data.get(field)
         if param_value:
             products = products.filter(**{field: param_value})
-
-    # Create a list to store product details as dictionaries
     product_list = []
-
-    # Extract and format product details
     for product in products:
         product_details = {
             'PRODUCT_ID': product.PRODUCT_ID,
