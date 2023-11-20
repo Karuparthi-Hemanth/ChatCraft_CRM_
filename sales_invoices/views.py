@@ -27,10 +27,10 @@ def addSalesInvoice(request):
                 deductProduct(request,data["SALES_ORDER_ID"])
                 sales_invoice_instance = form.save()
                 # Convert the instance data to a dictionary
-                sales_invoice_data = model_to_dict(sales_invoice_instance)
-                # Convert the dictionary to a JSON string
-                sales_invoice_json = json.dumps(sales_invoice_data)
-                updatecustomerbalance(sales_invoice_json)
+                # sales_invoice_data = model_to_dict(sales_invoice_instance)
+                # # Convert the dictionary to a JSON string
+                # sales_invoice_json = json.dumps(sales_invoice_data)
+                updatecustomerbalance(so.CUSTOMER_ID,data["TOTAL_AMOUNT"])
                 # return HttpResponse("added")
                 return redirect('/sales_invoices/get/')
             # else:
@@ -110,9 +110,6 @@ def deductProduct(request,sales_order_id):
     sales_order.STATUS='invoiced'
     sales_order.save()
 
-def updatecustomerbalance(data):
-    data = json.loads(data)
-    customer=Customer.objects.get(CUSTOMER_ID=int(data["CUSTOMER_ID"]))
-    customer.BALANCE_DUE=customer.BALANCE_DUE+int(data["TOTAL_AMOUNT"])
+def updatecustomerbalance(customer,total_amount):
+    customer.BALANCE_DUE=customer.BALANCE_DUE+int(total_amount)
     customer.save()
-    return data

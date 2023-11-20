@@ -264,12 +264,13 @@
         </div>
     </div>
     <!-- Your existing HTML code... -->
-
+    {%if user.is_authenticated %}
     <button id="toggle-chat"
         style="position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; font-size: 16px; background-color: teal; color: white; border: none; border-radius: 5px; cursor: pointer;">
         <i class="fas fa-comment"></i>
         <span class="badge badge-danger" id="my-badge">2</span>
     </button>
+    {%endif%}
     <!-- Your existing HTML code... -->
 
     <!-- Add Bootstrap JS (optional, for dropdowns, toggles, etc.) -->
@@ -303,7 +304,7 @@
                     appendMessage(`${input}`, 'user');
                     if (all_modules.includes(input)) {
                         module = input;
-                        appendMessage('Enter action (add, delete, edit).', 'bot');
+                        appendMessage('Enter action (add, delete).', 'bot');
                     }
                     else {
                         appendMessage('Enter valid module.', 'bot');

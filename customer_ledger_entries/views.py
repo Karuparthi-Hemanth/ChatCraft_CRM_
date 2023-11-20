@@ -49,8 +49,8 @@ def addCustomerLedgerEntry(request : HttpRequest):
         form = CustomerLedgerEntryForm(data)
         if form.is_valid():
             updatecustomerbalance(data['CUSTOMER_ID'],data['AMOUNT'])
-            updatesalesinvoice(data)
             form.save()
+            updatesalesinvoice(data)
             # return HttpResponse("added")
             return redirect('/customer_ledger_entries/get/')
         # else:
